@@ -36,6 +36,7 @@ export const TEAMS = {
 
     // Super Lig
     645: { id: 645, name: 'Galatasaray', logo: 'https://media.api-sports.io/football/teams/645.png', league: 'Super Lig' },
+    610: { id: 610, name: 'Fenerbahce', logo: 'https://upload.wikimedia.org/wikipedia/tr/8/86/Fenerbah%C3%A7e_SK.png', league: 'Super Lig' },
 
     // Portekiz
     212: { id: 212, name: 'Sporting CP', logo: 'https://media.api-sports.io/football/teams/212.png', league: 'Primeira Liga' },
@@ -46,6 +47,25 @@ export const TEAMS = {
     569: { id: 569, name: 'RB Salzburg', logo: 'https://media.api-sports.io/football/teams/569.png', league: 'Austrian Bundesliga' },
     80: { id: 80, name: 'Lyon', logo: 'https://media.api-sports.io/football/teams/80.png', league: 'Ligue 1' },
     79: { id: 79, name: 'Lille', logo: 'https://media.api-sports.io/football/teams/79.png', league: 'Ligue 1' },
+    81: { id: 81, name: 'Marseille', logo: 'https://media.api-sports.io/football/teams/81.png', league: 'Ligue 1' },
+    498: { id: 498, name: 'Atalanta', logo: 'https://media.api-sports.io/football/teams/498.png', league: 'Serie A' },
+    487: { id: 487, name: 'Lazio', logo: 'https://media.api-sports.io/football/teams/487.png', league: 'Serie A' },
+    163: { id: 163, name: 'Hoffenheim', logo: 'https://media.api-sports.io/football/teams/163.png', league: 'Bundesliga' },
+    533: { id: 533, name: 'Villarreal', logo: 'https://media.api-sports.io/football/teams/533.png', league: 'La Liga' },
+    548: { id: 548, name: 'Ajax', logo: 'https://media.api-sports.io/football/teams/548.png', league: 'Eredivisie' },
+    39: { id: 39, name: 'Wolves', logo: 'https://media.api-sports.io/football/teams/39.png', league: 'Premier League' },
+    45: { id: 45, name: 'Everton', logo: 'https://media.api-sports.io/football/teams/45.png', league: 'Premier League' },
+
+    // Saudi Pro League
+    2931: { id: 2931, name: 'Al Nassr', logo: 'https://media.api-sports.io/football/teams/2931.png', league: 'Saudi Pro League' },
+    2932: { id: 2932, name: 'Al Ittihad', logo: 'https://media.api-sports.io/football/teams/2932.png', league: 'Saudi Pro League' },
+    2939: { id: 2939, name: 'Al Hilal', logo: 'https://media.api-sports.io/football/teams/2939.png', league: 'Saudi Pro League' },
+
+    // Brasileirao
+    124: { id: 124, name: 'Santos', logo: 'https://media.api-sports.io/football/teams/124.png', league: 'Brasileirao' },
+
+    // MLS
+    1604: { id: 1604, name: 'LA Galaxy', logo: 'https://media.api-sports.io/football/teams/1604.png', league: 'MLS' },
 };
 
 export const getTeamById = (id) => TEAMS[id] || null;

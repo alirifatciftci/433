@@ -5,6 +5,7 @@ import HomeScreen from './src/screens/HomeScreen';
 import GuessPlayerScreen from './src/screens/GuessPlayerScreen';
 import CommonPlayerScreen from './src/screens/CommonPlayerScreen';
 import TransferTriviaScreen from './src/screens/TransferTriviaScreen';
+import GridGameScreen from './src/screens/GridGameScreen';
 import SuccessScreen from './src/screens/SuccessScreen';
 
 export default function App() {
@@ -32,6 +33,9 @@ export default function App() {
       )}
       {currentScreen === 'transferTrivia' && (
         <TransferTriviaScreen onSuccess={handleSuccess} onBack={() => navigateTo('home')} />
+      )}
+      {currentScreen === 'gridGame' && (
+        <GridGameScreen navigation={{ goBack: () => navigateTo('home') }} />
       )}
       {currentScreen === 'success' && (
         <SuccessScreen points={500} onContinue={() => navigateTo('home')} />

@@ -14,8 +14,19 @@ const GAMES = [
     { id: 1, title: 'Guess the Player', subtitle: 'Wordle style football', icon: '⚽', color: '#00ff88', screen: 'guessPlayer' },
     { id: 2, title: 'Common Player', subtitle: 'Find the link', icon: '🔗', color: '#00d4ff', screen: 'game' },
     { id: 3, title: 'Transfer Trivia', subtitle: 'Career path quiz', icon: '✈️', color: '#ff6b00', screen: 'transferTrivia' },
-    { id: 4, title: 'Stadium Master', subtitle: 'Coming soon', icon: '🏟️', color: '#a855f7', screen: 'game' },
+    { id: 4, title: 'Football Grid', subtitle: '3x3 team puzzle', icon: '🎯', color: '#a855f7', screen: 'gridGame' },
 ];
+
+// Logo komponenti
+const AppLogo = () => (
+    <View style={styles.logoContainer}>
+        <Text style={styles.logoIcon}>⚽</Text>
+        <View>
+            <Text style={styles.logoText}>Footy</Text>
+            <Text style={styles.logoTextAccent}>Quiz</Text>
+        </View>
+    </View>
+);
 
 export default function HomeScreen({ onNavigate, totalPoints }) {
     return (
@@ -25,11 +36,9 @@ export default function HomeScreen({ onNavigate, totalPoints }) {
                 style={styles.gradientOverlay}
             />
 
+            {/* Header with Logo */}
             <View style={styles.header}>
-                <View>
-                    <Text style={styles.greeting}>Welcome back!</Text>
-                    <Text style={styles.title}>Game Hub</Text>
-                </View>
+                <AppLogo />
                 <View style={styles.pointsBadge}>
                     <Text style={styles.pointsIcon}>🪙</Text>
                     <Text style={styles.pointsText}>{totalPoints}</Text>
@@ -37,7 +46,14 @@ export default function HomeScreen({ onNavigate, totalPoints }) {
             </View>
 
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                <Text style={styles.sectionTitle}>🔥 Popular Games</Text>
+                {/* Welcome Section */}
+                <View style={styles.welcomeSection}>
+                    <Text style={styles.welcomeText}>Hoş geldin! 👋</Text>
+                    <Text style={styles.welcomeSubtext}>Bugün hangi oyunu oynamak istersin?</Text>
+                </View>
+
+                {/* Games Section */}
+                <Text style={styles.sectionTitle}>🎮 Oyunlar</Text>
 
                 <View style={styles.gamesGrid}>
                     {GAMES.map((game) => (
@@ -57,13 +73,33 @@ export default function HomeScreen({ onNavigate, totalPoints }) {
                                 <Text style={styles.gameTitle}>{game.title}</Text>
                                 <Text style={styles.gameSubtitle}>{game.subtitle}</Text>
                                 <View style={[styles.playButton, { backgroundColor: game.color }]}>
-                                    <Text style={styles.playButtonText}>Play</Text>
+                                    <Text style={styles.playButtonText}>Oyna</Text>
                                 </View>
                             </LinearGradient>
                         </TouchableOpacity>
                     ))}
                 </View>
 
+                {/* Stats Section */}
+                <View style={styles.statsSection}>
+                    <Text style={styles.sectionTitle}>📊 İstatistikler</Text>
+                    <View style={styles.statsGrid}>
+                        <View style={styles.statCard}>
+                            <Text style={styles.statValue}>4</Text>
+                            <Text style={styles.statLabel}>Oyun</Text>
+                        </View>
+                        <View style={styles.statCard}>
+                            <Text style={styles.statValue}>50</Text>
+                            <Text style={styles.statLabel}>Oyuncu</Text>
+                        </View>
+                        <View style={styles.statCard}>
+                            <Text style={styles.statValue}>40+</Text>
+                            <Text style={styles.statLabel}>Takım</Text>
+                        </View>
+                    </View>
+                </View>
+
+                {/* Daily Challenge - Bottom */}
                 <View style={styles.featuredCard}>
                     <LinearGradient
                         colors={['#00ff88', '#00d4ff']}
@@ -71,12 +107,23 @@ export default function HomeScreen({ onNavigate, totalPoints }) {
                         end={{ x: 1, y: 1 }}
                         style={styles.featuredGradient}
                     >
-                        <Text style={styles.featuredTitle}>Daily Challenge</Text>
-                        <Text style={styles.featuredSubtitle}>Win 1000 bonus points!</Text>
-                        <TouchableOpacity style={styles.featuredButton}>
-                            <Text style={styles.featuredButtonText}>Start Now →</Text>
-                        </TouchableOpacity>
+                        <View style={styles.featuredContent}>
+                            <View style={styles.featuredLeft}>
+                                <Text style={styles.featuredBadge}>🔥 GÜNLÜK</Text>
+                                <Text style={styles.featuredTitle}>Daily Challenge</Text>
+                                <Text style={styles.featuredSubtitle}>1000 bonus puan kazan!</Text>
+                            </View>
+                            <TouchableOpacity style={styles.featuredButton}>
+                                <Text style={styles.featuredButtonText}>Başla</Text>
+                            </TouchableOpacity>
+                        </View>
                     </LinearGradient>
+                </View>
+
+                {/* Footer */}
+                <View style={styles.footer}>
+                    <Text style={styles.footerText}>FootyQuiz v1.0</Text>
+                    <Text style={styles.footerSubtext}>Made with ⚽ for football fans</Text>
                 </View>
             </ScrollView>
         </View>
@@ -102,16 +149,27 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 20,
         paddingTop: 60,
-        paddingBottom: 20,
+        paddingBottom: 15,
     },
-    greeting: {
-        color: '#888',
-        fontSize: 14,
+    logoContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
-    title: {
+    logoIcon: {
+        fontSize: 36,
+        marginRight: 10,
+    },
+    logoText: {
         color: '#fff',
-        fontSize: 28,
+        fontSize: 24,
         fontWeight: 'bold',
+        lineHeight: 26,
+    },
+    logoTextAccent: {
+        color: '#39FF14',
+        fontSize: 24,
+        fontWeight: 'bold',
+        lineHeight: 26,
     },
     pointsBadge: {
         flexDirection: 'row',
@@ -133,6 +191,19 @@ const styles = StyleSheet.create({
     content: {
         flex: 1,
         paddingHorizontal: 20,
+    },
+    welcomeSection: {
+        marginBottom: 25,
+    },
+    welcomeText: {
+        color: '#fff',
+        fontSize: 22,
+        fontWeight: '600',
+    },
+    welcomeSubtext: {
+        color: '#666',
+        fontSize: 14,
+        marginTop: 4,
     },
     sectionTitle: {
         color: '#fff',
@@ -193,35 +264,90 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         fontSize: 12,
     },
+    statsSection: {
+        marginTop: 10,
+        marginBottom: 5,
+    },
+    statsGrid: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    statCard: {
+        flex: 1,
+        backgroundColor: 'rgba(255,255,255,0.05)',
+        borderRadius: 12,
+        padding: 16,
+        marginHorizontal: 4,
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.1)',
+    },
+    statValue: {
+        color: '#39FF14',
+        fontSize: 28,
+        fontWeight: 'bold',
+    },
+    statLabel: {
+        color: '#666',
+        fontSize: 12,
+        marginTop: 4,
+    },
     featuredCard: {
-        marginTop: 8,
-        marginBottom: 30,
+        marginTop: 20,
         borderRadius: 20,
         overflow: 'hidden',
     },
     featuredGradient: {
-        padding: 24,
+        padding: 20,
+    },
+    featuredContent: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    featuredLeft: {
+        flex: 1,
+    },
+    featuredBadge: {
+        color: 'rgba(0,0,0,0.6)',
+        fontSize: 11,
+        fontWeight: 'bold',
+        marginBottom: 4,
     },
     featuredTitle: {
         color: '#000',
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: 'bold',
     },
     featuredSubtitle: {
         color: 'rgba(0,0,0,0.7)',
-        fontSize: 14,
-        marginTop: 4,
+        fontSize: 13,
+        marginTop: 2,
     },
     featuredButton: {
         backgroundColor: '#000',
-        paddingHorizontal: 20,
-        paddingVertical: 12,
-        borderRadius: 10,
-        alignSelf: 'flex-start',
-        marginTop: 16,
+        paddingHorizontal: 24,
+        paddingVertical: 14,
+        borderRadius: 12,
     },
     featuredButtonText: {
         color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 14,
+    },
+    footer: {
+        alignItems: 'center',
+        paddingVertical: 30,
+        marginTop: 10,
+    },
+    footerText: {
+        color: '#333',
+        fontSize: 14,
         fontWeight: '600',
+    },
+    footerSubtext: {
+        color: '#222',
+        fontSize: 12,
+        marginTop: 4,
     },
 });
