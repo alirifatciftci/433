@@ -1,11 +1,9 @@
-import React from 'react';
 import {
     View,
     Text,
     StyleSheet,
     TouchableOpacity,
     ScrollView,
-    ImageBackground,
     Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -13,10 +11,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 const { width } = Dimensions.get('window');
 
 const GAMES = [
-    { id: 1, title: 'Guess the Player', subtitle: 'Find the common player', icon: '⚽', color: '#00ff88' },
-    { id: 2, title: 'Team Quiz', subtitle: 'Test your knowledge', icon: '🏆', color: '#00d4ff' },
-    { id: 3, title: 'Transfer Trivia', subtitle: 'Who moved where?', icon: '✈️', color: '#ff6b00' },
-    { id: 4, title: 'Stadium Master', subtitle: 'Name the stadium', icon: '🏟️', color: '#a855f7' },
+    { id: 1, title: 'Guess the Player', subtitle: 'Wordle style football', icon: '⚽', color: '#00ff88', screen: 'guessPlayer' },
+    { id: 2, title: 'Common Player', subtitle: 'Find the link', icon: '🔗', color: '#00d4ff', screen: 'game' },
+    { id: 3, title: 'Transfer Trivia', subtitle: 'Who moved where?', icon: '✈️', color: '#ff6b00', screen: 'game' },
+    { id: 4, title: 'Stadium Master', subtitle: 'Name the stadium', icon: '🏟️', color: '#a855f7', screen: 'game' },
 ];
 
 export default function HomeScreen({ onNavigate, totalPoints }) {
@@ -46,7 +44,7 @@ export default function HomeScreen({ onNavigate, totalPoints }) {
                         <TouchableOpacity
                             key={game.id}
                             style={styles.gameCard}
-                            onPress={() => onNavigate('game')}
+                            onPress={() => onNavigate(game.screen)}
                             activeOpacity={0.8}
                         >
                             <LinearGradient

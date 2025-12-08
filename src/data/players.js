@@ -1,0 +1,118 @@
+// Oyuncu veritabanı
+export const PLAYERS = [
+    {
+        id: 1,
+        name: 'Erling Haaland',
+        nationality: '🇳🇴',
+        nationalityName: 'Norway',
+        league: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+        leagueName: 'Premier League',
+        team: 'Manchester City',
+        teamLogo: '🔵',
+        position: 'FW',
+        age: 24,
+        shirtNumber: 9,
+    },
+    {
+        id: 2,
+        name: 'Kylian Mbappe',
+        nationality: '🇫🇷',
+        nationalityName: 'France',
+        league: '🇪🇸',
+        leagueName: 'La Liga',
+        team: 'Real Madrid',
+        teamLogo: '⚪',
+        position: 'FW',
+        age: 25,
+        shirtNumber: 9,
+    },
+    {
+        id: 3,
+        name: 'Jude Bellingham',
+        nationality: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+        nationalityName: 'England',
+        league: '🇪🇸',
+        leagueName: 'La Liga',
+        team: 'Real Madrid',
+        teamLogo: '⚪',
+        position: 'MF',
+        age: 21,
+        shirtNumber: 5,
+    },
+    {
+        id: 4,
+        name: 'Vinicius Junior',
+        nationality: '🇧🇷',
+        nationalityName: 'Brazil',
+        league: '🇪🇸',
+        leagueName: 'La Liga',
+        team: 'Real Madrid',
+        teamLogo: '⚪',
+        position: 'FW',
+        age: 24,
+        shirtNumber: 7,
+    },
+    {
+        id: 5,
+        name: 'Mohamed Salah',
+        nationality: '🇪🇬',
+        nationalityName: 'Egypt',
+        league: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+        leagueName: 'Premier League',
+        team: 'Liverpool',
+        teamLogo: '🔴',
+        position: 'FW',
+        age: 32,
+        shirtNumber: 11,
+    },
+    {
+        id: 6,
+        name: 'Kevin De Bruyne',
+        nationality: '🇧🇪',
+        nationalityName: 'Belgium',
+        league: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+        leagueName: 'Premier League',
+        team: 'Manchester City',
+        teamLogo: '🔵',
+        position: 'MF',
+        age: 33,
+        shirtNumber: 17,
+    },
+    {
+        id: 7,
+        name: 'Bukayo Saka',
+        nationality: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+        nationalityName: 'England',
+        league: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+        leagueName: 'Premier League',
+        team: 'Arsenal',
+        teamLogo: '🔴',
+        position: 'FW',
+        age: 23,
+        shirtNumber: 7,
+    },
+    {
+        id: 8,
+        name: 'Rodri',
+        nationality: '🇪🇸',
+        nationalityName: 'Spain',
+        league: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+        leagueName: 'Premier League',
+        team: 'Manchester City',
+        teamLogo: '🔵',
+        position: 'MF',
+        age: 28,
+        shirtNumber: 16,
+    },
+];
+
+// Oyuncu adına göre arama
+export const findPlayerByName = (name) => {
+    const searchName = name.toLowerCase().trim();
+    return PLAYERS.find(p => p.name.toLowerCase().includes(searchName));
+};
+
+// Rastgele oyuncu seç
+export const getRandomPlayer = () => {
+    return PLAYERS[Math.floor(Math.random() * PLAYERS.length)];
+};

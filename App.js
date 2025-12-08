@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import HomeScreen from './src/screens/HomeScreen';
 import GameScreen from './src/screens/GameScreen';
+import GuessPlayerScreen from './src/screens/GuessPlayerScreen';
 import SuccessScreen from './src/screens/SuccessScreen';
 
 export default function App() {
@@ -24,6 +25,9 @@ export default function App() {
       )}
       {currentScreen === 'game' && (
         <GameScreen onSuccess={handleSuccess} onBack={() => navigateTo('home')} />
+      )}
+      {currentScreen === 'guessPlayer' && (
+        <GuessPlayerScreen onSuccess={handleSuccess} onBack={() => navigateTo('home')} />
       )}
       {currentScreen === 'success' && (
         <SuccessScreen points={500} onContinue={() => navigateTo('home')} />
