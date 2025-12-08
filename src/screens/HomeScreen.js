@@ -13,8 +13,8 @@ const { width } = Dimensions.get('window');
 const GAMES = [
     { id: 1, title: 'Guess the Player', subtitle: 'Wordle style football', icon: '⚽', color: '#00ff88', screen: 'guessPlayer' },
     { id: 2, title: 'Common Player', subtitle: 'Find the link', icon: '🔗', color: '#00d4ff', screen: 'game' },
-    { id: 3, title: 'Transfer Trivia', subtitle: 'Who moved where?', icon: '✈️', color: '#ff6b00', screen: 'game' },
-    { id: 4, title: 'Stadium Master', subtitle: 'Name the stadium', icon: '🏟️', color: '#a855f7', screen: 'game' },
+    { id: 3, title: 'Transfer Trivia', subtitle: 'Career path quiz', icon: '✈️', color: '#ff6b00', screen: 'transferTrivia' },
+    { id: 4, title: 'Stadium Master', subtitle: 'Coming soon', icon: '🏟️', color: '#a855f7', screen: 'game' },
 ];
 
 export default function HomeScreen({ onNavigate, totalPoints }) {

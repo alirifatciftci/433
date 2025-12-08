@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import HomeScreen from './src/screens/HomeScreen';
-import GameScreen from './src/screens/GameScreen';
 import GuessPlayerScreen from './src/screens/GuessPlayerScreen';
+import CommonPlayerScreen from './src/screens/CommonPlayerScreen';
+import TransferTriviaScreen from './src/screens/TransferTriviaScreen';
 import SuccessScreen from './src/screens/SuccessScreen';
 
 export default function App() {
@@ -24,10 +25,13 @@ export default function App() {
         <HomeScreen onNavigate={navigateTo} totalPoints={points} />
       )}
       {currentScreen === 'game' && (
-        <GameScreen onSuccess={handleSuccess} onBack={() => navigateTo('home')} />
+        <CommonPlayerScreen onSuccess={handleSuccess} onBack={() => navigateTo('home')} />
       )}
       {currentScreen === 'guessPlayer' && (
         <GuessPlayerScreen onSuccess={handleSuccess} onBack={() => navigateTo('home')} />
+      )}
+      {currentScreen === 'transferTrivia' && (
+        <TransferTriviaScreen onSuccess={handleSuccess} onBack={() => navigateTo('home')} />
       )}
       {currentScreen === 'success' && (
         <SuccessScreen points={500} onContinue={() => navigateTo('home')} />
