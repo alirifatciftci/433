@@ -1,11 +1,33 @@
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import HomeScreen from './src/screens/HomeScreen';
+import GameScreen from './src/screens/GameScreen';
+import SuccessScreen from './src/screens/SuccessScreen';
 
 export default function App() {
+  const [currentScreen, setCurrentScreen] = useState('home');
+  const [points, setPoints] = useState(0);
+
+  const navigateTo = (screen) => setCurrentScreen(screen);
+
+  const handleSuccess = (earnedPoints) => {
+    setPoints(prev => prev + earnedPoints);
+    navigateTo('success');
+  };
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
+      {currentScreen === 'home' && (
+        <HomeScreen onNavigate={navigateTo} totalPoints={points} />
+      )}
+      {currentScreen === 'game' && (
+        <GameScreen onSuccess={handleSuccess} onBack={() => navigateTo('home')} />
+      )}
+      {currentScreen === 'success' && (
+        <SuccessScreen points={500} onContinue={() => navigateTo('home')} />
+      )}
     </View>
   );
 }
@@ -13,8 +35,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#0a0a0f',
   },
 });
