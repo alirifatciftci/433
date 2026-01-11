@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
-import { motion } from 'framer-motion';
-import { PLAYERS, getRandomPlayer } from '../data/players';
+import React, { useState, useEffect } from "react";
+import styled, { keyframes } from "styled-components";
+import { motion } from "framer-motion";
+import ApiService from "../services/api";
 
 const MAX_GUESSES = 8;
 
 const COLORS = {
-    correct: '#22c55e',
-    close: '#eab308',
-    wrong: '#6b7280',
+  correct: "#22c55e",
+  close: "#eab308",
+  wrong: "#6b7280",
 };
 
 const Container = styled.div`
@@ -36,7 +36,7 @@ const BackButton = styled.button`
   display: flex;
   align-items: center;
   gap: 6px;
-  
+
   &:hover {
     color: #fff;
   }
@@ -53,7 +53,7 @@ const GuessCounter = styled.div`
 `;
 
 const CounterText = styled.span`
-  color: #39FF14;
+  color: #39ff14;
   font-size: 15px;
   font-weight: 600;
 `;
@@ -61,7 +61,11 @@ const CounterText = styled.span`
 const MysteryCard = styled.div`
   max-width: 600px;
   margin: 0 auto 24px;
-  background: linear-gradient(145deg, rgba(30, 30, 40, 0.9) 0%, rgba(20, 20, 28, 0.9) 100%);
+  background: linear-gradient(
+    145deg,
+    rgba(30, 30, 40, 0.9) 0%,
+    rgba(20, 20, 28, 0.9) 100%
+  );
   border: 1px solid rgba(57, 255, 20, 0.15);
   border-radius: 20px;
   padding: 24px;
@@ -73,7 +77,11 @@ const MysteryCard = styled.div`
 const MysteryEmoji = styled.div`
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, rgba(57, 255, 20, 0.2) 0%, rgba(0, 212, 255, 0.2) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(57, 255, 20, 0.2) 0%,
+    rgba(0, 212, 255, 0.2) 100%
+  );
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -108,7 +116,7 @@ const QuestionMark = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 24px;
-  color: #39FF14;
+  color: #39ff14;
   font-weight: bold;
 `;
 
@@ -120,7 +128,11 @@ const SearchSection = styled.div`
 
 const SearchInput = styled.input`
   width: 100%;
-  background: linear-gradient(145deg, rgba(30, 30, 40, 0.9) 0%, rgba(20, 20, 28, 0.9) 100%);
+  background: linear-gradient(
+    145deg,
+    rgba(30, 30, 40, 0.9) 0%,
+    rgba(20, 20, 28, 0.9) 100%
+  );
   border: 1px solid rgba(57, 255, 20, 0.2);
   border-radius: 14px;
   padding: 16px 20px;
@@ -129,17 +141,17 @@ const SearchInput = styled.input`
   color: #fff;
   box-sizing: border-box;
   transition: all 0.3s ease;
-  
+
   &::placeholder {
     color: #666;
   }
-  
+
   &:focus {
     outline: none;
-    border-color: #39FF14;
+    border-color: #39ff14;
     box-shadow: 0 0 20px rgba(57, 255, 20, 0.1);
   }
-  
+
   &:disabled {
     opacity: 0.5;
   }
@@ -156,13 +168,17 @@ const SearchIcon = styled.span`
 const PlayerListContainer = styled.div`
   max-width: 600px;
   margin: 0 auto 20px;
-  max-height: ${props => props.$expanded ? '300px' : '0'};
+  max-height: ${(props) => (props.$expanded ? "300px" : "0")};
   overflow: hidden;
   transition: max-height 0.3s ease;
 `;
 
 const PlayerList = styled.div`
-  background: linear-gradient(145deg, rgba(30, 30, 40, 0.95) 0%, rgba(20, 20, 28, 0.95) 100%);
+  background: linear-gradient(
+    145deg,
+    rgba(30, 30, 40, 0.95) 0%,
+    rgba(20, 20, 28, 0.95) 100%
+  );
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   overflow: hidden;
@@ -178,11 +194,11 @@ const PlayerItem = styled.div`
   cursor: pointer;
   transition: all 0.2s ease;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  
+
   &:hover {
     background: rgba(57, 255, 20, 0.1);
   }
-  
+
   &:last-child {
     border-bottom: none;
   }
@@ -224,7 +240,11 @@ const GuessesContainer = styled.div`
 
 const GuessRow = styled(motion.div)`
   margin-bottom: 16px;
-  background: linear-gradient(145deg, rgba(30, 30, 40, 0.6) 0%, rgba(20, 20, 28, 0.6) 100%);
+  background: linear-gradient(
+    145deg,
+    rgba(30, 30, 40, 0.6) 0%,
+    rgba(20, 20, 28, 0.6) 100%
+  );
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
   padding: 16px;
@@ -262,14 +282,14 @@ const AttributeCell = styled.div`
 const AttributeValue = styled(motion.div)`
   width: 100%;
   aspect-ratio: 1;
-  background: ${props => COLORS[props.result]};
+  background: ${(props) => COLORS[props.result]};
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   animation: ${flipAnimation} 0.5s ease-out;
-  animation-delay: ${props => props.delay}ms;
+  animation-delay: ${(props) => props.delay}ms;
   animation-fill-mode: both;
 `;
 
@@ -300,7 +320,11 @@ const GameOverContainer = styled.div`
 `;
 
 const ResultCard = styled.div`
-  background: linear-gradient(145deg, rgba(30, 30, 40, 0.9) 0%, rgba(20, 20, 28, 0.9) 100%);
+  background: linear-gradient(
+    145deg,
+    rgba(30, 30, 40, 0.9) 0%,
+    rgba(20, 20, 28, 0.9) 100%
+  );
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   padding: 32px;
@@ -313,7 +337,7 @@ const ResultEmoji = styled.div`
 `;
 
 const ResultTitle = styled.div`
-  color: ${props => props.$won ? '#39FF14' : '#ef4444'};
+  color: ${(props) => (props.$won ? "#39FF14" : "#ef4444")};
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 8px;
@@ -326,7 +350,7 @@ const ResultPlayer = styled.div`
 `;
 
 const PlayAgainButton = styled.button`
-  background: linear-gradient(135deg, #39FF14 0%, #00d4ff 100%);
+  background: linear-gradient(135deg, #39ff14 0%, #00d4ff 100%);
   border: none;
   border-radius: 14px;
   padding: 18px 32px;
@@ -336,7 +360,7 @@ const PlayAgainButton = styled.button`
   cursor: pointer;
   width: 100%;
   transition: all 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(57, 255, 20, 0.3);
@@ -360,21 +384,40 @@ const AnimatedCell = ({ value, result, label, delay, isImage }) => {
 
 const GuessPlayerScreen = ({ onBack, onComplete }) => {
   const [targetPlayer, setTargetPlayer] = useState(null);
+  const [allPlayers, setAllPlayers] = useState([]);
   const [guesses, setGuesses] = useState([]);
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setTargetPlayer(getRandomPlayer());
+    loadGameData();
   }, []);
 
+  const loadGameData = async () => {
+    try {
+      setLoading(true);
+      const [players, randomPlayer] = await Promise.all([
+        ApiService.getAllPlayers(),
+        ApiService.getRandomPlayer(),
+      ]);
+      setAllPlayers(players);
+      setTargetPlayer(randomPlayer);
+    } catch (error) {
+      console.error("Failed to load game data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getFilteredPlayers = () => {
-    return PLAYERS.filter(
-      (p) => 
+    return allPlayers.filter(
+      (p) =>
         !guesses.find((g) => g.id === p.id) &&
-        (searchText === '' || p.name.toLowerCase().includes(searchText.toLowerCase()))
+        (searchText === "" ||
+          p.name.toLowerCase().includes(searchText.toLowerCase()))
     );
   };
 
@@ -389,13 +432,22 @@ const GuessPlayerScreen = ({ onBack, onComplete }) => {
 
     const newGuesses = [...guesses, newGuess];
     setGuesses(newGuesses);
-    setSearchText('');
+    setSearchText("");
     setIsSearchFocused(false);
 
     if (player.id === targetPlayer.id) {
       setWon(true);
       setGameOver(true);
-      setTimeout(() => onComplete && onComplete(500, { success: true, guesses: newGuesses.length, player: targetPlayer }), 1500);
+      setTimeout(
+        () =>
+          onComplete &&
+          onComplete(500, {
+            success: true,
+            guesses: newGuesses.length,
+            player: targetPlayer,
+          }),
+        1500
+      );
     } else if (newGuesses.length >= MAX_GUESSES) {
       setGameOver(true);
     }
@@ -403,36 +455,67 @@ const GuessPlayerScreen = ({ onBack, onComplete }) => {
 
   const comparePlayer = (guess, target) => {
     return {
-      nationality: guess.nationality === target.nationality ? 'correct' : 'wrong',
-      league: guess.league === target.league ? 'correct' : 'wrong',
-      team: guess.team === target.team ? 'correct' : 'wrong',
-      position: guess.position === target.position ? 'correct' : 'wrong',
+      nationality:
+        guess.nationality === target.nationality ? "correct" : "wrong",
+      league: guess.league === target.league ? "correct" : "wrong",
+      team: guess.team === target.team ? "correct" : "wrong",
+      position: guess.position === target.position ? "correct" : "wrong",
       age: getAgeResult(guess.age, target.age),
-      ageDirection: guess.age < target.age ? '↑' : guess.age > target.age ? '↓' : '',
-      shirtNumber: getNumberResult(guess.shirtNumber, target.shirtNumber),
-      shirtDirection: guess.shirtNumber < target.shirtNumber ? '↑' : guess.shirtNumber > target.shirtNumber ? '↓' : '',
+      ageDirection:
+        guess.age < target.age ? "↑" : guess.age > target.age ? "↓" : "",
+      shirtNumber: getNumberResult(guess.shirt_number, target.shirt_number),
+      shirtDirection:
+        guess.shirt_number < target.shirt_number
+          ? "↑"
+          : guess.shirt_number > target.shirt_number
+          ? "↓"
+          : "",
     };
   };
 
   const getAgeResult = (guess, target) => {
-    if (guess === target) return 'correct';
-    if (Math.abs(guess - target) <= 2) return 'close';
-    return 'wrong';
+    if (guess === target) return "correct";
+    if (Math.abs(guess - target) <= 2) return "close";
+    return "wrong";
   };
 
   const getNumberResult = (guess, target) => {
-    if (guess === target) return 'correct';
-    if (Math.abs(guess - target) <= 5) return 'close';
-    return 'wrong';
+    if (guess === target) return "correct";
+    if (Math.abs(guess - target) <= 5) return "close";
+    return "wrong";
   };
 
-  const resetGame = () => {
-    setTargetPlayer(getRandomPlayer());
-    setGuesses([]);
-    setGameOver(false);
-    setWon(false);
-    setSearchText('');
+  const resetGame = async () => {
+    try {
+      const randomPlayer = await ApiService.getRandomPlayer();
+      setTargetPlayer(randomPlayer);
+      setGuesses([]);
+      setGameOver(false);
+      setWon(false);
+      setSearchText("");
+    } catch (error) {
+      console.error("Failed to reset game:", error);
+    }
   };
+
+  if (loading) {
+    return (
+      <Container>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "50vh",
+            color: "#fff",
+            fontSize: "18px",
+          }}
+        >
+          Oyun yükleniyor...
+        </div>
+      </Container>
+    );
+  }
 
   const renderGuessRow = (guess) => (
     <GuessRow
@@ -442,12 +525,45 @@ const GuessPlayerScreen = ({ onBack, onComplete }) => {
     >
       <PlayerName>{guess.name}</PlayerName>
       <AttributesRow>
-        <AnimatedCell value={guess.nationalityFlag} result={guess.results.nationality} label="NAT" delay={0} isImage />
-        <AnimatedCell value={guess.leagueLogo} result={guess.results.league} label="LGE" delay={100} isImage />
-        <AnimatedCell value={guess.teamLogo} result={guess.results.team} label="TEAM" delay={200} isImage />
-        <AnimatedCell value={guess.position} result={guess.results.position} label="POS" delay={300} />
-        <AnimatedCell value={`${guess.age}${guess.results.ageDirection}`} result={guess.results.age} label="AGE" delay={400} />
-        <AnimatedCell value={`#${guess.shirtNumber}${guess.results.shirtDirection}`} result={guess.results.shirtNumber} label="SHIRT" delay={500} />
+        <AnimatedCell
+          value={guess.nationality_flag}
+          result={guess.results.nationality}
+          label="NAT"
+          delay={0}
+          isImage
+        />
+        <AnimatedCell
+          value={guess.league_logo}
+          result={guess.results.league}
+          label="LGE"
+          delay={100}
+          isImage
+        />
+        <AnimatedCell
+          value={guess.team_logo}
+          result={guess.results.team}
+          label="TEAM"
+          delay={200}
+          isImage
+        />
+        <AnimatedCell
+          value={guess.position}
+          result={guess.results.position}
+          label="POS"
+          delay={300}
+        />
+        <AnimatedCell
+          value={`${guess.age}${guess.results.ageDirection}`}
+          result={guess.results.age}
+          label="AGE"
+          delay={400}
+        />
+        <AnimatedCell
+          value={`#${guess.shirt_number}${guess.results.shirtDirection}`}
+          result={guess.results.shirtNumber}
+          label="SHIRT"
+          delay={500}
+        />
       </AttributesRow>
     </GuessRow>
   );
@@ -459,11 +575,11 @@ const GuessPlayerScreen = ({ onBack, onComplete }) => {
   return (
     <Container>
       <Header>
-        <BackButton onClick={onBack}>
-          ← Geri
-        </BackButton>
+        <BackButton onClick={onBack}>← Geri</BackButton>
         <GuessCounter>
-          <CounterText>{guesses.length} / {MAX_GUESSES}</CounterText>
+          <CounterText>
+            {guesses.length} / {MAX_GUESSES}
+          </CounterText>
         </GuessCounter>
       </Header>
 
@@ -492,16 +608,24 @@ const GuessPlayerScreen = ({ onBack, onComplete }) => {
 
           <PlayerListContainer $expanded={showPlayerList}>
             <PlayerList>
-              {getFilteredPlayers().slice(0, 10).map((player) => (
-                <PlayerItem key={player.id} onClick={() => handleSelectPlayer(player)}>
-                  <PlayerLogo src={player.teamLogo} alt={player.team} />
-                  <PlayerInfo>
-                    <PlayerItemName>{player.name}</PlayerItemName>
-                    <PlayerItemTeam>{player.team}</PlayerItemTeam>
-                  </PlayerInfo>
-                  <PlayerFlag src={player.nationalityFlag} alt={player.nationality} />
-                </PlayerItem>
-              ))}
+              {getFilteredPlayers()
+                .slice(0, 10)
+                .map((player) => (
+                  <PlayerItem
+                    key={player.id}
+                    onClick={() => handleSelectPlayer(player)}
+                  >
+                    <PlayerLogo src={player.team_logo} alt={player.team} />
+                    <PlayerInfo>
+                      <PlayerItemName>{player.name}</PlayerItemName>
+                      <PlayerItemTeam>{player.team}</PlayerItemTeam>
+                    </PlayerInfo>
+                    <PlayerFlag
+                      src={player.nationality_flag}
+                      alt={player.nationality}
+                    />
+                  </PlayerItem>
+                ))}
             </PlayerList>
           </PlayerListContainer>
         </>
@@ -514,17 +638,15 @@ const GuessPlayerScreen = ({ onBack, onComplete }) => {
       {gameOver && (
         <GameOverContainer>
           <ResultCard>
-            <ResultEmoji>{won ? '🎉' : '😔'}</ResultEmoji>
-            <ResultTitle $won={won}>
-              {won ? 'Doğru!' : 'Yanlış!'}
-            </ResultTitle>
+            <ResultEmoji>{won ? "🎉" : "😔"}</ResultEmoji>
+            <ResultTitle $won={won}>{won ? "Doğru!" : "Yanlış!"}</ResultTitle>
             <ResultPlayer>
-              {won ? `${guesses.length} tahminde bildin!` : `Cevap: ${targetPlayer?.name}`}
+              {won
+                ? `${guesses.length} tahminde bildin!`
+                : `Cevap: ${targetPlayer?.name}`}
             </ResultPlayer>
           </ResultCard>
-          <PlayAgainButton onClick={resetGame}>
-            Tekrar Oyna
-          </PlayAgainButton>
+          <PlayAgainButton onClick={resetGame}>Tekrar Oyna</PlayAgainButton>
         </GameOverContainer>
       )}
     </Container>

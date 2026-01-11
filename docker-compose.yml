@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Veritabanı
+  postgres:
+    image: postgres:15-alpine
+    container_name: footyquiz-postgres
+    environment:
+      POSTGRES_DB: footyquiz
+      POSTGRES_USER: footyquiz_user
+      POSTGRES_PASSWORD: footyquiz_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    networks:
+      - footyquiz-network
+
+  # Web Uygulaması
+  web:
+    build: ./footyquiz-web
+    container_name: footyquiz-web
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - api
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000
+    networks:
+      - footyquiz-network
+
+  # Backend API
+  api:
+    build: ./footyquiz-api
+    container_name: footyquiz-api
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=footyquiz
+      - DB_USER=footyquiz_user
+      - DB_PASSWORD=footyquiz_pass
+    networks:
+      - footyquiz-network
+
+  # Adminer - Web üzerinden PostgreSQL yönetimi
+  adminer:
+    image: adminer
+    container_name: footyquiz-adminer
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+    networks:
+      - footyquiz-network
+
+volumes:
+  postgres_data:
+
+networks:
+  footyquiz-network:
+    driver: bridge

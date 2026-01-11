@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { motion } from 'framer-motion';
-import { PLAYERS, getRandomCommonPlayerChallenge } from '../data/players';
-import { TEAMS } from '../data/teams';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import { motion } from "framer-motion";
+import ApiService from "../services/api";
 
 const MAX_GUESSES = 6;
 
@@ -28,7 +27,7 @@ const BackButton = styled.button`
   font-size: 16px;
   cursor: pointer;
   padding: 8px;
-  
+
   &:hover {
     color: #fff;
   }
@@ -84,7 +83,11 @@ const TeamCard = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: linear-gradient(145deg, rgba(30, 30, 40, 0.9) 0%, rgba(20, 20, 28, 0.9) 100%);
+  background: linear-gradient(
+    145deg,
+    rgba(30, 30, 40, 0.9) 0%,
+    rgba(20, 20, 28, 0.9) 100%
+  );
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   padding: 24px 16px;
@@ -114,7 +117,7 @@ const VsContainer = styled.div`
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #00d4ff, #39FF14);
+  background: linear-gradient(135deg, #00d4ff, #39ff14);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -130,7 +133,11 @@ const SearchSection = styled.div`
 
 const SearchInput = styled.input`
   width: 100%;
-  background: linear-gradient(145deg, rgba(30, 30, 40, 0.9) 0%, rgba(20, 20, 28, 0.9) 100%);
+  background: linear-gradient(
+    145deg,
+    rgba(30, 30, 40, 0.9) 0%,
+    rgba(20, 20, 28, 0.9) 100%
+  );
   border: 1px solid rgba(0, 212, 255, 0.2);
   border-radius: 14px;
   padding: 16px 20px;
@@ -139,17 +146,17 @@ const SearchInput = styled.input`
   color: #fff;
   box-sizing: border-box;
   transition: all 0.3s ease;
-  
+
   &::placeholder {
     color: #666;
   }
-  
+
   &:focus {
     outline: none;
     border-color: #00d4ff;
     box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
   }
-  
+
   &:disabled {
     opacity: 0.5;
   }
@@ -166,13 +173,17 @@ const SearchIcon = styled.span`
 const PlayerListContainer = styled.div`
   max-width: 600px;
   margin: 0 auto 20px;
-  max-height: ${props => props.$expanded ? '250px' : '0'};
+  max-height: ${(props) => (props.$expanded ? "250px" : "0")};
   overflow: hidden;
   transition: max-height 0.3s ease;
 `;
 
 const PlayerList = styled.div`
-  background: linear-gradient(145deg, rgba(30, 30, 40, 0.95) 0%, rgba(20, 20, 28, 0.95) 100%);
+  background: linear-gradient(
+    145deg,
+    rgba(30, 30, 40, 0.95) 0%,
+    rgba(20, 20, 28, 0.95) 100%
+  );
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   overflow: hidden;
@@ -188,11 +199,11 @@ const PlayerItem = styled.div`
   cursor: pointer;
   transition: all 0.2s ease;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  
+
   &:hover {
     background: rgba(0, 212, 255, 0.1);
   }
-  
+
   &:last-child {
     border-bottom: none;
   }
@@ -240,10 +251,13 @@ const GuessRow = styled(motion.div)`
   padding: 16px;
   border-radius: 14px;
   margin-bottom: 12px;
-  background: ${props => props.$isCorrect 
-    ? 'linear-gradient(145deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%)' 
-    : 'linear-gradient(145deg, rgba(107, 114, 128, 0.2) 0%, rgba(107, 114, 128, 0.1) 100%)'};
-  border: 1px solid ${props => props.$isCorrect ? 'rgba(34, 197, 94, 0.3)' : 'rgba(107, 114, 128, 0.2)'};
+  background: ${(props) =>
+    props.$isCorrect
+      ? "linear-gradient(145deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%)"
+      : "linear-gradient(145deg, rgba(107, 114, 128, 0.2) 0%, rgba(107, 114, 128, 0.1) 100%)"};
+  border: 1px solid
+    ${(props) =>
+      props.$isCorrect ? "rgba(34, 197, 94, 0.3)" : "rgba(107, 114, 128, 0.2)"};
 `;
 
 const GuessLogo = styled.img`
@@ -280,7 +294,11 @@ const GameOverContainer = styled.div`
 `;
 
 const ResultCard = styled.div`
-  background: linear-gradient(145deg, rgba(30, 30, 40, 0.9) 0%, rgba(20, 20, 28, 0.9) 100%);
+  background: linear-gradient(
+    145deg,
+    rgba(30, 30, 40, 0.9) 0%,
+    rgba(20, 20, 28, 0.9) 100%
+  );
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   padding: 32px;
@@ -293,7 +311,7 @@ const ResultEmoji = styled.div`
 `;
 
 const ResultTitle = styled.div`
-  color: ${props => props.$won ? '#39FF14' : '#ef4444'};
+  color: ${(props) => (props.$won ? "#39FF14" : "#ef4444")};
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 8px;
@@ -306,7 +324,7 @@ const ResultText = styled.div`
 
 const PlayAgainButton = styled.button`
   width: 100%;
-  background: linear-gradient(135deg, #00d4ff, #39FF14);
+  background: linear-gradient(135deg, #00d4ff, #39ff14);
   border: none;
   border-radius: 14px;
   padding: 18px;
@@ -315,7 +333,7 @@ const PlayAgainButton = styled.button`
   color: #000;
   cursor: pointer;
   transition: all 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3);
@@ -331,33 +349,83 @@ const LoadingText = styled.div`
 
 const CommonPlayerScreen = ({ onSuccess, onBack }) => {
   const [challenge, setChallenge] = useState(null);
+  const [allPlayers, setAllPlayers] = useState([]);
   const [guesses, setGuesses] = useState([]);
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
   const [foundPlayers, setFoundPlayers] = useState([]);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    startNewGame();
+    loadGameData();
   }, []);
 
-  const startNewGame = () => {
-    const newChallenge = getRandomCommonPlayerChallenge();
-    setChallenge(newChallenge);
+  const loadGameData = async () => {
+    try {
+      setLoading(true);
+      const players = await ApiService.getAllPlayers();
+      setAllPlayers(players);
+      await generateNewChallenge(players);
+    } catch (error) {
+      console.error("Failed to load game data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const generateNewChallenge = async (players = allPlayers) => {
+    // Rastgele iki takım seç ve ortak oyuncuları bul
+    const teamIds = [...new Set(players.map((p) => p.team_id))];
+
+    let attempts = 0;
+    while (attempts < 100) {
+      const team1 = teamIds[Math.floor(Math.random() * teamIds.length)];
+      const team2 = teamIds[Math.floor(Math.random() * teamIds.length)];
+
+      if (team1 !== team2) {
+        try {
+          const commonPlayers = await ApiService.getCommonPlayers(team1, team2);
+          if (commonPlayers.length > 0) {
+            const team1Info = players.find((p) => p.team_id === team1);
+            const team2Info = players.find((p) => p.team_id === team2);
+
+            setChallenge({
+              team1: team1,
+              team2: team2,
+              team1Name: team1Info?.team || "Team 1",
+              team2Name: team2Info?.team || "Team 2",
+              team1Logo: team1Info?.team_logo || "",
+              team2Logo: team2Info?.team_logo || "",
+              commonPlayers: commonPlayers,
+            });
+            return;
+          }
+        } catch (error) {
+          console.error("Error getting common players:", error);
+        }
+      }
+      attempts++;
+    }
+  };
+
+  const startNewGame = async () => {
     setGuesses([]);
     setGameOver(false);
     setWon(false);
     setFoundPlayers([]);
-    setSearchText('');
+    setSearchText("");
+    await generateNewChallenge();
   };
 
   const getFilteredPlayers = () => {
-    return PLAYERS.filter(
+    return allPlayers.filter(
       (p) =>
         !guesses.includes(p.id) &&
         !foundPlayers.includes(p.id) &&
-        (searchText === '' || p.name.toLowerCase().includes(searchText.toLowerCase()))
+        (searchText === "" ||
+          p.name.toLowerCase().includes(searchText.toLowerCase()))
     );
   };
 
@@ -367,7 +435,7 @@ const CommonPlayerScreen = ({ onSuccess, onBack }) => {
     const isCorrect = challenge.commonPlayers.some((p) => p.id === player.id);
     const newGuesses = [...guesses, player.id];
     setGuesses(newGuesses);
-    setSearchText('');
+    setSearchText("");
     setIsSearchFocused(false);
 
     if (isCorrect) {
@@ -384,6 +452,25 @@ const CommonPlayerScreen = ({ onSuccess, onBack }) => {
     }
   };
 
+  if (loading) {
+    return (
+      <Container>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "50vh",
+            color: "#fff",
+            fontSize: "18px",
+          }}
+        >
+          Oyun yükleniyor...
+        </div>
+      </Container>
+    );
+  }
+
   if (!challenge) {
     return (
       <Container>
@@ -392,8 +479,14 @@ const CommonPlayerScreen = ({ onSuccess, onBack }) => {
     );
   }
 
-  const team1 = TEAMS[challenge.team1];
-  const team2 = TEAMS[challenge.team2];
+  const team1 = {
+    name: challenge.team1Name,
+    logo: challenge.team1Logo,
+  };
+  const team2 = {
+    name: challenge.team2Name,
+    logo: challenge.team2Logo,
+  };
   const showPlayerList = isSearchFocused || searchText.length > 0;
 
   return (
@@ -401,7 +494,9 @@ const CommonPlayerScreen = ({ onSuccess, onBack }) => {
       <Header>
         <BackButton onClick={onBack}>← Geri</BackButton>
         <GuessCounter>
-          <CounterText>{guesses.length} / {MAX_GUESSES}</CounterText>
+          <CounterText>
+            {guesses.length} / {MAX_GUESSES}
+          </CounterText>
         </GuessCounter>
       </Header>
 
@@ -413,7 +508,7 @@ const CommonPlayerScreen = ({ onSuccess, onBack }) => {
       <TeamsContainer
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: 'spring', tension: 50, friction: 7 }}
+        transition={{ type: "spring", tension: 50, friction: 7 }}
       >
         <TeamCard>
           <TeamLogo src={team1?.logo} alt={team1?.name} />
@@ -446,16 +541,24 @@ const CommonPlayerScreen = ({ onSuccess, onBack }) => {
 
           <PlayerListContainer $expanded={showPlayerList}>
             <PlayerList>
-              {getFilteredPlayers().slice(0, 10).map((player) => (
-                <PlayerItem key={player.id} onClick={() => handleSelectPlayer(player)}>
-                  <PlayerLogo src={player.teamLogo} alt={player.team} />
-                  <PlayerInfo>
-                    <PlayerItemName>{player.name}</PlayerItemName>
-                    <PlayerItemTeam>{player.team}</PlayerItemTeam>
-                  </PlayerInfo>
-                  <PlayerFlag src={player.nationalityFlag} alt={player.nationality} />
-                </PlayerItem>
-              ))}
+              {getFilteredPlayers()
+                .slice(0, 10)
+                .map((player) => (
+                  <PlayerItem
+                    key={player.id}
+                    onClick={() => handleSelectPlayer(player)}
+                  >
+                    <PlayerLogo src={player.team_logo} alt={player.team} />
+                    <PlayerInfo>
+                      <PlayerItemName>{player.name}</PlayerItemName>
+                      <PlayerItemTeam>{player.team}</PlayerItemTeam>
+                    </PlayerInfo>
+                    <PlayerFlag
+                      src={player.nationality_flag}
+                      alt={player.nationality}
+                    />
+                  </PlayerItem>
+                ))}
             </PlayerList>
           </PlayerListContainer>
         </>
@@ -463,8 +566,10 @@ const CommonPlayerScreen = ({ onSuccess, onBack }) => {
 
       <GuessesContainer>
         {[...guesses].reverse().map((playerId, index) => {
-          const player = PLAYERS.find((p) => p.id === playerId);
-          const isCorrect = challenge.commonPlayers.some((p) => p.id === playerId);
+          const player = allPlayers.find((p) => p.id === playerId);
+          const isCorrect = challenge.commonPlayers.some(
+            (p) => p.id === playerId
+          );
           return (
             <GuessRow
               key={index}
@@ -473,12 +578,12 @@ const CommonPlayerScreen = ({ onSuccess, onBack }) => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <GuessLogo src={player?.teamLogo} alt={player?.team} />
+              <GuessLogo src={player?.team_logo} alt={player?.team} />
               <GuessInfo>
                 <GuessName>{player?.name}</GuessName>
                 <GuessTeam>{player?.team}</GuessTeam>
               </GuessInfo>
-              <GuessResult>{isCorrect ? '✅' : '❌'}</GuessResult>
+              <GuessResult>{isCorrect ? "✅" : "❌"}</GuessResult>
             </GuessRow>
           );
         })}
@@ -487,15 +592,14 @@ const CommonPlayerScreen = ({ onSuccess, onBack }) => {
       {gameOver && (
         <GameOverContainer>
           <ResultCard>
-            <ResultEmoji>{won ? '🎉' : '😔'}</ResultEmoji>
-            <ResultTitle $won={won}>
-              {won ? 'Doğru!' : 'Yanlış!'}
-            </ResultTitle>
+            <ResultEmoji>{won ? "🎉" : "😔"}</ResultEmoji>
+            <ResultTitle $won={won}>{won ? "Doğru!" : "Yanlış!"}</ResultTitle>
             <ResultText>
-              {won 
-                ? `${guesses.length} tahminde bildin!` 
-                : `Cevap: ${challenge.commonPlayers.map((p) => p.name).join(', ')}`
-              }
+              {won
+                ? `${guesses.length} tahminde bildin!`
+                : `Cevap: ${challenge.commonPlayers
+                    .map((p) => p.name)
+                    .join(", ")}`}
             </ResultText>
           </ResultCard>
           <PlayAgainButton onClick={startNewGame}>Tekrar Oyna</PlayAgainButton>
