@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd footyquiz-web && npm install && npm run build",
+  "outputDirectory": "footyquiz-web/build",
+  "installCommand": "cd footyquiz-web && npm install",
+  "framework": "create-react-app"
+}
