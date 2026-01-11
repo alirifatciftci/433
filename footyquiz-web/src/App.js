@@ -30,6 +30,7 @@ function App() {
   const [currentScreen, setCurrentScreen] = useState(GAMES.HOME);
   const [totalPoints, setTotalPoints] = useState(2500);
   const [gameResult, setGameResult] = useState(null);
+  const [gridKey, setGridKey] = useState(0);
 
   // URL'de challenge varsa direkt oraya git
   useEffect(() => {
@@ -40,6 +41,9 @@ function App() {
 
   const navigateToScreen = (screen, result = null) => {
     setGameResult(result);
+    if (screen === GAMES.GRID_GAME) {
+      setGridKey(prev => prev + 1);
+    }
     setCurrentScreen(screen);
   };
 
@@ -82,7 +86,11 @@ function App() {
       case GAMES.GRID_GAME:
         return (
           <GridGameScreen 
-            onBack={() => setCurrentScreen(GAMES.HOME)}
+            key={`grid-${gridKey}`}
+            onBack={() => {
+              setGridKey(prev => prev + 1);
+              setCurrentScreen(GAMES.HOME);
+            }}
             onComplete={handleGameComplete}
           />
         );

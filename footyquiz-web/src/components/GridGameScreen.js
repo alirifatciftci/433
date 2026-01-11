@@ -1,56 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PLAYERS, getAllTeamsForPlayer } from '../data/players';
 import { TEAMS, getTeamById } from '../data/teams';
-
-// Fisher-Yates shuffle
-const shuffleArray = (array) => {
-    const arr = [...array];
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-};
-
-const generateValidGrid = () => {
-    const teamIds = Object.keys(TEAMS).map(Number);
-    let attempts = 0;
-    const validGrids = [];
-
-    while (attempts < 1000 && validGrids.length < 20) {
-        const shuffled = shuffleArray(teamIds);
-        const rowTeams = shuffled.slice(0, 3);
-        const colTeams = shuffled.slice(3, 6);
-
-        let valid = true;
-        for (const rowTeam of rowTeams) {
-            for (const colTeam of colTeams) {
-                const commonPlayers = PLAYERS.filter(player => {
-                    const allTeams = getAllTeamsForPlayer(player);
-                    return allTeams.includes(rowTeam) && allTeams.includes(colTeam);
-                });
-                if (commonPlayers.length === 0) {
-                    valid = false;
-                    break;
-                }
-            }
-            if (!valid) break;
-        }
-
-        if (valid) {
-            validGrids.push({ rowTeams, colTeams });
-        }
-        attempts++;
-    }
-
-    if (validGrids.length > 0) {
-        return validGrids[Math.floor(Math.random() * validGrids.length)];
-    }
-
-    return { rowTeams: [541, 529, 157], colTeams: [165, 50, 49] };
-};
 
 const Container = styled.div`
   min-height: 100vh;
@@ -108,26 +60,6 @@ const LogoAccent = styled.span`
   line-height: 1.1;
 `;
 
-const NewGameButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: linear-gradient(135deg, #a855f7, #7c3aed);
-  color: #fff;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(168, 85, 247, 0.3);
-  }
-`;
-
 const InfoCard = styled.div`
   display: flex;
   background: linear-gradient(145deg, rgba(30, 30, 40, 0.9) 0%, rgba(20, 20, 28, 0.9) 100%);
@@ -159,7 +91,7 @@ const InfoLabel = styled.div`
 `;
 
 const InfoValue = styled.div`
-  color: ${props => props.$color || '#a855f7'};
+  color: ${props => props.color || '#a855f7'};
   font-size: 22px;
   font-weight: 700;
 `;
@@ -213,8 +145,8 @@ const TeamLogoContainer = styled.div`
 `;
 
 const TeamLogo = styled.img`
-  width: ${props => props.size || 40}px;
-  height: ${props => props.size || 40}px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
 `;
 
@@ -264,8 +196,8 @@ const AnswerContainer = styled.div`
 `;
 
 const Jersey = styled.div`
-  width: ${props => props.size || 45}px;
-  height: ${props => (props.size || 45) * 1.1}px;
+  width: 45px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -285,7 +217,7 @@ const JerseyBody = styled.div`
 const JerseyNumber = styled.span`
   color: #e0e0e0;
   font-weight: 700;
-  font-size: ${props => props.size * 0.45}px;
+  font-size: 20px;
 `;
 
 const PlayerName = styled.div`
@@ -340,7 +272,7 @@ const GameOverEmoji = styled.div`
 `;
 
 const GameOverText = styled.div`
-  color: ${props => props.$perfect ? '#39FF14' : '#a855f7'};
+  color: ${props => props.perfect ? '#39FF14' : '#a855f7'};
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 8px;
@@ -519,6 +451,31 @@ const PlayerFlag = styled.img`
   object-fit: cover;
 `;
 
+// Wrong Answer Popup
+const WrongPopup = styled(motion.div)`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(145deg, #ff4444 0%, #cc0000 100%);
+  padding: 24px 48px;
+  border-radius: 16px;
+  z-index: 2000;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(255, 0, 0, 0.4);
+`;
+
+const WrongEmoji = styled.div`
+  font-size: 48px;
+  margin-bottom: 12px;
+`;
+
+const WrongText = styled.div`
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+`;
+
 const GridGameScreen = ({ onBack }) => {
     const [grid, setGrid] = useState(null);
     const [answers, setAnswers] = useState(Array(9).fill(null));
@@ -528,10 +485,61 @@ const GridGameScreen = ({ onBack }) => {
     const [usedPlayers, setUsedPlayers] = useState([]);
     const [score, setScore] = useState(0);
     const [guessesLeft, setGuessesLeft] = useState(9);
+    const [showWrong, setShowWrong] = useState(false);
+
+    const generateValidGrid = useCallback(() => {
+        const teamIds = Object.keys(TEAMS).map(Number);
+        
+        // Fisher-Yates shuffle
+        const shuffle = (arr) => {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        };
+        
+        let attempts = 0;
+        const validGrids = [];
+        
+        while (attempts < 500 && validGrids.length < 30) {
+            const shuffled = shuffle(teamIds);
+            const rowTeams = shuffled.slice(0, 3);
+            const colTeams = shuffled.slice(3, 6);
+
+            let valid = true;
+            for (const rowTeam of rowTeams) {
+                for (const colTeam of colTeams) {
+                    const hasCommon = PLAYERS.some(player => {
+                        const allTeams = getAllTeamsForPlayer(player);
+                        return allTeams.includes(rowTeam) && allTeams.includes(colTeam);
+                    });
+                    if (!hasCommon) {
+                        valid = false;
+                        break;
+                    }
+                }
+                if (!valid) break;
+            }
+
+            if (valid) {
+                validGrids.push({ rowTeams, colTeams });
+            }
+            attempts++;
+        }
+
+        if (validGrids.length > 0) {
+            return validGrids[Math.floor(Math.random() * validGrids.length)];
+        }
+
+        return { rowTeams: [541, 529, 157], colTeams: [165, 50, 49] };
+    }, []);
 
     useEffect(() => {
-        startNewGame();
-    }, []);
+        const newGrid = generateValidGrid();
+        setGrid(newGrid);
+    }, [generateValidGrid]);
 
     const startNewGame = () => {
         const newGrid = generateValidGrid();
@@ -563,15 +571,23 @@ const GridGameScreen = ({ onBack }) => {
         const allTeams = getAllTeamsForPlayer(player);
         const isCorrect = allTeams.includes(rowTeamId) && allTeams.includes(colTeamId);
 
+        setModalVisible(false);
+        
         if (isCorrect) {
             const newAnswers = [...answers];
             newAnswers[index] = player;
             setAnswers(newAnswers);
             setUsedPlayers([...usedPlayers, player.id]);
             setScore(score + 1);
+        } else {
+            // Show wrong popup
+            setShowWrong(true);
+            setTimeout(() => {
+                setShowWrong(false);
+            }, 1500);
         }
+        
         setGuessesLeft(guessesLeft - 1);
-        setModalVisible(false);
         setSelectedCell(null);
     };
 
@@ -581,21 +597,21 @@ const GridGameScreen = ({ onBack }) => {
         return player.name.toLowerCase().includes(searchText.toLowerCase());
     });
 
-    const renderTeamLogo = (teamId, size = 40) => {
+    const renderTeamLogo = (teamId) => {
         const team = getTeamById(teamId);
         if (!team) return null;
         return (
             <TeamLogoContainer>
-                <TeamLogo src={team.logo} alt={team.name} size={size} />
+                <TeamLogo src={team.logo} alt={team.name} />
                 <TeamName>{team.name}</TeamName>
             </TeamLogoContainer>
         );
     };
 
-    const renderJersey = (shirtNumber, size = 45) => (
-        <Jersey size={size}>
+    const renderJersey = (shirtNumber) => (
+        <Jersey>
             <JerseyBody>
-                <JerseyNumber size={size}>{shirtNumber}</JerseyNumber>
+                <JerseyNumber>{shirtNumber}</JerseyNumber>
             </JerseyBody>
         </Jersey>
     );
@@ -616,7 +632,7 @@ const GridGameScreen = ({ onBack }) => {
             >
                 {answer ? (
                     <AnswerContainer>
-                        {renderJersey(answer.shirtNumber, 45)}
+                        {renderJersey(answer.shirtNumber)}
                         <PlayerName>{answer.name}</PlayerName>
                     </AnswerContainer>
                 ) : (
@@ -640,26 +656,26 @@ const GridGameScreen = ({ onBack }) => {
                         <LogoAccent>Grid</LogoAccent>
                     </LogoText>
                 </LogoContainer>
-                <NewGameButton onClick={startNewGame}>🔄 Yeni</NewGameButton>
+                <div style={{ width: '80px' }} />
             </Header>
 
             <InfoCard>
                 <InfoItem>
                     <InfoEmoji>✅</InfoEmoji>
                     <InfoLabel>SKOR</InfoLabel>
-                    <InfoValue $color="#39FF14">{score}/9</InfoValue>
+                    <InfoValue color="#39FF14">{score}/9</InfoValue>
                 </InfoItem>
                 <InfoDivider />
                 <InfoItem>
                     <InfoEmoji>🎯</InfoEmoji>
                     <InfoLabel>KALAN</InfoLabel>
-                    <InfoValue $color="#00d4ff">{guessesLeft}</InfoValue>
+                    <InfoValue color="#00d4ff">{guessesLeft}</InfoValue>
                 </InfoItem>
                 <InfoDivider />
                 <InfoItem>
                     <InfoEmoji>📊</InfoEmoji>
                     <InfoLabel>BAŞARI</InfoLabel>
-                    <InfoValue $color="#a855f7">{guessesLeft < 9 ? Math.round((score / (9 - guessesLeft)) * 100) : 0}%</InfoValue>
+                    <InfoValue color="#a855f7">{guessesLeft < 9 ? Math.round((score / (9 - guessesLeft)) * 100) : 0}%</InfoValue>
                 </InfoItem>
             </InfoCard>
 
@@ -668,14 +684,14 @@ const GridGameScreen = ({ onBack }) => {
                     <CornerCell />
                     {grid.colTeams.map((teamId, i) => (
                         <HeaderCell key={`col-${i}`}>
-                            {renderTeamLogo(teamId, 40)}
+                            {renderTeamLogo(teamId)}
                         </HeaderCell>
                     ))}
                 </TopRow>
                 {[0, 1, 2].map(row => (
                     <GridRow key={`row-${row}`}>
                         <RowHeader>
-                            {renderTeamLogo(grid.rowTeams[row], 40)}
+                            {renderTeamLogo(grid.rowTeams[row])}
                         </RowHeader>
                         {[0, 1, 2].map(col => renderCell(row, col))}
                     </GridRow>
@@ -686,7 +702,7 @@ const GridGameScreen = ({ onBack }) => {
                 <BottomSection>
                     <GameOverCard>
                         <GameOverEmoji>{score === 9 ? '🎉' : '🏁'}</GameOverEmoji>
-                        <GameOverText $perfect={score === 9}>
+                        <GameOverText perfect={score === 9}>
                             {score === 9 ? 'Mükemmel!' : 'Oyun Bitti!'}
                         </GameOverText>
                         <GameOverScore>
@@ -706,6 +722,20 @@ const GridGameScreen = ({ onBack }) => {
                     <FooterText>Football Grid</FooterText>
                 </BottomSection>
             )}
+
+            {/* Wrong Answer Popup */}
+            <AnimatePresence>
+                {showWrong && (
+                    <WrongPopup
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.5 }}
+                    >
+                        <WrongEmoji>❌</WrongEmoji>
+                        <WrongText>Yanlış!</WrongText>
+                    </WrongPopup>
+                )}
+            </AnimatePresence>
 
             <AnimatePresence>
                 {modalVisible && (
@@ -729,9 +759,9 @@ const GridGameScreen = ({ onBack }) => {
                             
                             {selectedCell && (
                                 <SelectedTeams>
-                                    {renderTeamLogo(grid.rowTeams[selectedCell.row], 35)}
+                                    {renderTeamLogo(grid.rowTeams[selectedCell.row])}
                                     <span style={{ fontSize: '24px' }}>🔗</span>
-                                    {renderTeamLogo(grid.colTeams[selectedCell.col], 35)}
+                                    {renderTeamLogo(grid.colTeams[selectedCell.col])}
                                 </SelectedTeams>
                             )}
                             
@@ -749,7 +779,7 @@ const GridGameScreen = ({ onBack }) => {
                             <PlayerList>
                                 {filteredPlayers.map((player) => (
                                     <PlayerItem key={player.id} onClick={() => handlePlayerSelect(player)}>
-                                        {renderJersey(player.shirtNumber, 40)}
+                                        {renderJersey(player.shirtNumber)}
                                         <PlayerItemInfo>
                                             <PlayerItemName>{player.name}</PlayerItemName>
                                             <PlayerItemTeam>{player.team}</PlayerItemTeam>
